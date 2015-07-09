@@ -54,6 +54,7 @@ function serializeParams(params) {
 
 }
 
+/*
 request(baseUrl + serializeParams(params), function(error, response, body) {
 
     if (!error && response.statusCode === 200) {
@@ -87,3 +88,33 @@ request(baseUrl + serializeParams(params), function(error, response, body) {
                                                                        
     }
 });
+*/
+
+function downloadImage(path, id) {
+
+    console.log('path: ' + path);
+    console.log('id: ' + id);
+
+};
+
+http.get(baseUrl + serializeParams(params), function(response) {
+
+    var output = '';
+
+    response.setEncoding('utf8');
+    response.on('data', function(body) {
+
+        output += body;
+
+    });
+
+    response.on('end', function() {
+
+        output = output.data;
+        _.forEach(output, function(element) {
+            downloadImage(element.images.original.url, element.id);
+        });
+
+    });
+});
+
