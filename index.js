@@ -12,7 +12,8 @@ var request = require('request'),
     _ = require('lodash'),
     baseUrl = 'http://api.giphy.com/v1/gifs/search',
     apiKey = 'dc6zaTOxFJmzC',
-    params;
+    params,
+    imageUrls = [];;
 
 params = {
     q: 'pugs',
@@ -55,9 +56,17 @@ request(baseUrl + serializeParams(params), function(error, response, body) {
 
         _.forEach(body, function(element, index) {
     
-            console.log(element.images.original.url); 
+            imageUrls.push(element.images.original.url);
+
+        });
+
+        console.log(imageUrls);
+
+        _.forEach(imageUrls, function(element, index) {
+
 
         });
 
     }
 });
+
