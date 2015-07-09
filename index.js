@@ -11,6 +11,7 @@
  */
 
 var request = require('request'),
+    http = require('http'),
     _ = require('lodash'),
     fs = require('fs'),
 
