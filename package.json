@@ -1,7 +1,7 @@
 {
   "name": "pugbalm",
-  "version": "0.0.2",
-  "description": "A command line tool that saves images of pugs to the directory where it is run.",
+  "version": "0.0.5",
+  "description": "A command line tool that delivers therapy pugs to the folder from which it is run.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -26,7 +26,9 @@
     "request": "^2.58.0"
   },
   "dependencies": {
-    "shelljs": "^0.5.1"
+    "shelljs": "^0.5.1",
+    "lodash": "^3.10.0",
+    "request": "^2.58.0"
   },
   "bin": {
     "pugbalm": "index.js"
