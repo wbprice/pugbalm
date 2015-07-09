@@ -74,7 +74,7 @@ request(baseUrl + serializeParams(params), function(error, response, body) {
 
                 console.log('should go to ' + destination);
 
-                fs.writeFile(destination, body, function(err) {
+                fs.writeFile(destination, body, 'binary', function(err) {
 
                     if (err) throw err;
                     
