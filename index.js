@@ -25,8 +25,8 @@ params = {
     api_key: apiKey,
 };
 
-/* 
- * @jsdoc function 
+/*
+ * @jsdoc function
  * @name serializeParams
  * @param {object}
  * Object containing request parameters.
@@ -36,7 +36,7 @@ params = {
 
 function serializeParams(params) {
 
-    var first = true; 
+    var first = true;
 
     return _.reduce(params, function(result, n, key) {
 
@@ -54,17 +54,15 @@ function serializeParams(params) {
 request(baseUrl + serializeParams(params), function(error, response, body) {
 
     if (!error && response.statusCode === 200) {
-    
+
         body = JSON.parse(body).data;
 
         _.forEach(body, function(element, index) {
-    
+
             imageIds.push(element.id);
             imageUrls.push(element.images.original.url);
 
         });
-
-        console.log(imageUrls);
 
         _.forEach(imageUrls, function(url, index) {
 
@@ -75,8 +73,6 @@ request(baseUrl + serializeParams(params), function(error, response, body) {
                 fs.writeFile(destination, body, 'binary', function(err) {
 
                     if (err) throw err;
-                    
-                    console.log('file saved.');
 
                 });
 
@@ -84,6 +80,7 @@ request(baseUrl + serializeParams(params), function(error, response, body) {
 
         });
 
+        console.log(process.argv[2] + ' pugs were delivered to ' + __dirname + '.  \nPowered by GIPHY http://giphy.com/');
+                                                                       
     }
 });
-
