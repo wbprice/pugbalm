@@ -1,5 +1,5 @@
 # pugbalm
-A command line tool that saves images of pugs where it is run.
+A tool that delivers therapy pugs to the directory from where it is run.
 
 # installation
 npm install -g pugbalm
