@@ -10,6 +10,7 @@
 
 var request = require('request'),
     _ = require('lodash'),
+    baseUrl = 'http://api.giphy.com/v1/gifs/search',
     apiKey = 'dc6zaTOxFJmzC',
     params;
 
@@ -29,12 +30,26 @@ params = {
 
 function serializeParams(params) {
 
+    var first = true; 
+
     return _.reduce(params, function(result, n, key) {
 
-        return result + key + n;
+        if (first) {
+            first = false;
+            return result + '?' + key + '=' + n;
+        } else {
+            return result + '&' + key + '=' + n;
+        }
 
     },'');
 
 }
 
-console.log(serializeParams(params));
+request(baseUrl + serializeParams(params), function(error, response, body) {
+
+    if (!error && response.statusCode === 200) {
+    
+        debugger;
+
+    }
+});
