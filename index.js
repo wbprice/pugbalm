@@ -68,7 +68,9 @@ request(baseUrl + serializeParams(params), function(error, response, body) {
 
         _.forEach(imageUrls, function(url, index) {
 
-            request(url, function(error, response, body) {
+            request({url: url, encoding: null}, function(error, response, body) {
+
+                debugger;
 
                 var destination = __dirname + '/' + imageIds[index] + '.gif';
 
