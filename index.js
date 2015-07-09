@@ -10,10 +10,13 @@
 
 var request = require('request'),
     _ = require('lodash'),
+    fs = require('fs'),
+
     baseUrl = 'http://api.giphy.com/v1/gifs/search',
     apiKey = 'dc6zaTOxFJmzC',
     params,
-    imageUrls = [];;
+    imageIds = [],
+    imageUrls = [];
 
 params = {
     q: 'pugs',
@@ -56,14 +59,30 @@ request(baseUrl + serializeParams(params), function(error, response, body) {
 
         _.forEach(body, function(element, index) {
     
+            imageIds.push(element.id);
             imageUrls.push(element.images.original.url);
 
         });
 
         console.log(imageUrls);
 
-        _.forEach(imageUrls, function(element, index) {
+        _.forEach(imageUrls, function(url, index) {
 
+            request(url, function(error, response, body) {
+
+                var destination = __dirname + '/' + imageIds[index] + '.gif';
+
+                console.log('should go to ' + destination);
+
+                fs.writeFile(destination, body, function(err) {
+
+                    if (err) throw err;
+                    
+                    console.log('file saved.');
+
+                });
+
+            });
 
         });
 
