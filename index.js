@@ -22,7 +22,7 @@ var request = require('request'),
 
 params = {
     q: 'pugs',
-    limit: process.argv[2],
+    limit: process.argv[2] || 5,
     fmt: 'json',
     api_key: apiKey,
 };
