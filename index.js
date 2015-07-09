@@ -14,6 +14,13 @@ var request = require('request'),
     apiKey = 'dc6zaTOxFJmzC',
     params;
 
+params = {
+    q: 'pugs',
+    limit: process.argv[2],
+    fmt: 'json',
+    api_key: apiKey,
+};
+
 /* 
  * @jsdoc function 
  * @name serializeParams
@@ -22,11 +29,6 @@ var request = require('request'),
  * @returns {string}
  * Accepts a params object and returns a serialized string to be appended to a base URL.
  */
-
-params = {
-    q: 'pugs',
-    api_key: apiKey,
-};
 
 function serializeParams(params) {
 
@@ -49,7 +51,13 @@ request(baseUrl + serializeParams(params), function(error, response, body) {
 
     if (!error && response.statusCode === 200) {
     
-        debugger;
+        body = JSON.parse(body).data;
+
+        _.forEach(body, function(element, index) {
+    
+            console.log(element.images.original.url); 
+
+        });
 
     }
 });
