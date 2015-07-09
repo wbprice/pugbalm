@@ -1,0 +1,28 @@
+{
+  "name": "pugbalm",
+  "version": "0.0.1",
+  "description": "A command line tool that saves images of pugs to the directory where it is run.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wbprice/pugbalm.git"
+  },
+  "keywords": [
+    "pugs",
+    "images",
+    "nodejs"
+  ],
+  "author": "W. Blaine Price",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wbprice/pugbalm/issues"
+  },
+  "homepage": "https://github.com/wbprice/pugbalm",
+  "devDependencies": {
+    "lodash": "^3.10.0",
+    "request": "^2.58.0"
+  }
+}
