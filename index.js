@@ -70,11 +70,7 @@ request(baseUrl + serializeParams(params), function(error, response, body) {
 
             request({url: url, encoding: null}, function(error, response, body) {
 
-                debugger;
-
                 var destination = __dirname + '/' + imageIds[index] + '.gif';
-
-                console.log('should go to ' + destination);
 
                 fs.writeFile(destination, body, 'binary', function(err) {
 
