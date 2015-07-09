@@ -24,5 +24,11 @@
   "devDependencies": {
     "lodash": "^3.10.0",
     "request": "^2.58.0"
+  },
+  "dependencies": {
+    "shelljs": "^0.5.1"
+  },
+  "bin": {
+    "pugbalm": "index.js"
   }
 }
