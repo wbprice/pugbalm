@@ -14,13 +14,15 @@ var http = require('http'),
     _ = require('lodash'),
     Stream = require('stream').Transform,
     fs = require('fs'),
+    imagesToDownload = Number(process.argv[2]) || 5,
+    imagesDownloaded = 0,
 
     baseUrl = 'http://api.giphy.com/v1/gifs/search',
     apiKey = 'dc6zaTOxFJmzC',
 
     params = {
         q: 'pugs',
-        limit: process.argv[2] || 5,
+        limit: imagesToDownload,
         fmt: 'json',
         api_key: apiKey,
     };
@@ -77,7 +79,16 @@ function downloadImage(path, id) {
 
       response.on('end', function() {
         fs.writeFile(destination, output.read(), function(err) {
+
           if (err) throw err;
+
+          imagesDownloaded++;
+
+          if (imagesToDownload === imagesDownloaded) {
+
+            console.log(imagesToDownload + ' pugs were delivered to ' + process.cwd() + '.\nPowered by GIPHY. http://giphy.com/');
+
+          }
 
         });
 
