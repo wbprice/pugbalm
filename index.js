@@ -14,7 +14,7 @@ var http = require('http'),
     _ = require('lodash'),
     Stream = require('stream').Transform,
     fs = require('fs'),
-    imagesToDownload = process.argv[2] || 5,
+    imagesToDownload = Number(process.argv[2]) || 5,
     imagesDownloaded = 0,
 
     baseUrl = 'http://api.giphy.com/v1/gifs/search',
@@ -84,7 +84,11 @@ function downloadImage(path, id) {
 
           imagesDownloaded++;
 
-          console.log('done?' + imagesToDownload === imagesDownloaded);
+          if (imagesToDownload === imagesDownloaded) {
+
+            console.log(imagesToDownload + ' pugs were delivered to ' + process.cwd() + '.\nPowered by GIPHY. http://giphy.com/');
+
+          }
 
         });
 
