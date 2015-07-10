@@ -21,6 +21,8 @@ var BPromise = require('bluebird'),
     baseUrl = 'http://api.giphy.com/v1/gifs/search',
     apiKey = 'dc6zaTOxFJmzC',
 
+    downloadLocation = process.cwd(),
+
     params = {
         q: 'pugs',
         limit: Number(process.argv[2]),
@@ -52,7 +54,7 @@ if (params.limit < 0) {
  */
 
 function downloadImage(path, id) {
-    var destination = process.cwd() + '/' + id + '.gif';
+    var destination = downloadLocation + '/' + id + '.gif';
 
     return wreck.requestAsync('GET', path, {agent: false, timeout: 30000})
         .then(function (response) {
@@ -86,6 +88,8 @@ function downloadImage(path, id) {
 
 function getListOfImages(baseUrl, params) {
 
+  var imagesDownloaded = 0;
+
   return wreck.getAsync(baseUrl + '?' + querystring.stringify(params), {json: true})
       .spread(function (response, payload) {
           return payload.data;
@@ -93,9 +97,12 @@ function getListOfImages(baseUrl, params) {
       .map(function (element) {
           return downloadImage(element.images.original.url, element.id).then(function () {
               statusStream.write('.');
+              imagesDownloaded++;
           });
       }, {concurrency: 10}).then(function () {
           statusStream.write('therapy complete\n');
+          statusStream.write(imagesDownloaded + ' pugs were delivered to ' + downloadLocation + '.\n');
+          statusStream.write('Powered by GIPHY. http://giphy.com/search/' + encodeURIComponent(params.q) + '\n');
       });
 
 };
