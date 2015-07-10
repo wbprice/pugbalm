@@ -7,25 +7,33 @@
  * A tool that delivers therapy pugs to the directory from which it is run.
  *
  * @example
- * pugbalm 5 //downloads 5 pugs. 
+ * pugbalm 5 //downloads 5 pugs.
  */
 
 var http = require('http'),
     _ = require('lodash'),
     Stream = require('stream').Transform,
     fs = require('fs'),
-    imagesToDownload = Number(process.argv[2]) || 5,
-    imagesDownloaded = 0,
 
     baseUrl = 'http://api.giphy.com/v1/gifs/search',
     apiKey = 'dc6zaTOxFJmzC',
 
     params = {
         q: 'pugs',
-        limit: imagesToDownload,
+        limit: Number(process.argv[2]),
+        offset: Date.now() % 800, // because there about 800 results in the query
         fmt: 'json',
         api_key: apiKey,
     };
+
+// Validate cli input
+if (!params.limit) {
+    throw new Error('You don\'t ask for therapy with a value not representative of actual therapy. SHAME');
+}
+
+if (params.limit < 0) {
+    throw new Error('Try a positive number for PUG therapy.');
+}
 
 /**
  * @jsdoc function
@@ -111,7 +119,7 @@ function getListOfImages(baseUrl, params) {
       });
 
       response.on('end', function() {
-      
+
           output = JSON.parse(output).data;
 
           _.forEach(output, function(element) {
