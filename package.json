@@ -1,6 +1,6 @@
 {
   "name": "pugbalm",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A command line tool that delivers therapy pugs to the folder from which it is run.",
   "main": "index.js",
   "scripts": {
