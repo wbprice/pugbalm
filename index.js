@@ -4,30 +4,28 @@
 
 /**
  * @description
- * A tool that downloads a given number of pug images to the directory where it is run.
+ * A tool that delivers therapy pugs to the directory from which it is run.
  *
  * @example
- * node pugbalm 5 // download 5 pugs
+ * pugbalm 5 //downloads 5 pugs. 
  */
 
-var request = require('request'),
+var http = require('http'),
     _ = require('lodash'),
+    Stream = require('stream').Transform,
     fs = require('fs'),
 
     baseUrl = 'http://api.giphy.com/v1/gifs/search',
     apiKey = 'dc6zaTOxFJmzC',
-    params,
-    imageIds = [],
-    imageUrls = [];
 
-params = {
-    q: 'pugs',
-    limit: process.argv[2],
-    fmt: 'json',
-    api_key: apiKey,
-};
+    params = {
+        q: 'pugs',
+        limit: process.argv[2] || 5,
+        fmt: 'json',
+        api_key: apiKey,
+    };
 
-/*
+/**
  * @jsdoc function
  * @name serializeParams
  * @param {object}
@@ -53,36 +51,76 @@ function serializeParams(params) {
 
 }
 
-request(baseUrl + serializeParams(params), function(error, response, body) {
+/**
+ * @jsdoc function
+ * @name downloadImage
+ * @param {string} path
+ * The URL for the image to be downloaded.
+ * @param {string} id
+ * The ID of the image to be downloaded.  Will be used to make the filename.
+ *
+ * @description
+ * Uses HTTP to download the image from the path provided and save it to the current working directory.
+ */
 
-    if (!error && response.statusCode === 200) {
+function downloadImage(path, id) {
 
-        body = JSON.parse(body).data;
+    http.get(path, function(response) {
 
-        _.forEach(body, function(element, index) {
+      var output = new Stream(),
+          destination = process.cwd() + '/' + id + '.gif';
 
-            imageIds.push(element.id);
-            imageUrls.push(element.images.original.url);
+      response.on('data', function(body) {
+        output.push(body);;
+
+      });
+
+      response.on('end', function() {
+        fs.writeFile(destination, output.read(), function(err) {
+          if (err) throw err;
 
         });
 
-        _.forEach(imageUrls, function(url, index) {
+      });
 
-            request({url: url, encoding: null}, function(error, response, body) {
+    });
 
-                var destination = process.cwd() + '/' + imageIds[index] + '.gif';
+};
 
-                fs.writeFile(destination, body, 'binary', function(err) {
+/**
+ * @jsdoc function
+ * @name getListOfImages
+ * @param {string} baseUrl
+ * The URL for the Giphy API.
+ * @param {object} params
+ * An object containing configuration information for the API request.
+ * @description
+ * Uses HTTP to get an array of objects that contain information related to a given gif.
+ */
 
-                    if (err) throw err;
+function getListOfImages(baseUrl, params) {
 
-                });
+  http.get(baseUrl + serializeParams(params), function(response) {
 
-            });
+      var output = '';
 
-        });
+      response.setEncoding('utf8');
+      response.on('data', function(body) {
+          output += body;
 
-        console.log(process.argv[2] + ' pugs were delivered to ' + __dirname + '.  \nPowered by GIPHY http://giphy.com/');
-                                                                       
-    }
-});
+      });
+
+      response.on('end', function() {
+      
+          output = JSON.parse(output).data;
+
+          _.forEach(output, function(element) {
+              downloadImage(element.images.original.url, element.id);
+          });
+
+      });
+  });
+
+};
+
+getListOfImages(baseUrl, params);
