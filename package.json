@@ -22,13 +22,11 @@
   },
   "homepage": "https://github.com/wbprice/pugbalm",
   "devDependencies": {
-    "lodash": "^3.10.0",
-    "request": "^2.58.0"
+    "lodash": "^3.10.0"
   },
   "dependencies": {
     "shelljs": "^0.5.1",
-    "lodash": "^3.10.0",
-    "request": "^2.58.0"
+    "lodash": "^3.10.0"
   },
   "bin": {
     "pugbalm": "index.js"
