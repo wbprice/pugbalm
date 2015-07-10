@@ -21,12 +21,10 @@
     "url": "https://github.com/wbprice/pugbalm/issues"
   },
   "homepage": "https://github.com/wbprice/pugbalm",
-  "devDependencies": {
-    "lodash": "^3.10.0"
-  },
   "dependencies": {
-    "shelljs": "^0.5.1",
-    "lodash": "^3.10.0"
+    "bluebird": "^2.9.33",
+    "lodash": "^3.10.0",
+    "wreck": "^6.0.0"
   },
   "bin": {
     "pugbalm": "index.js"

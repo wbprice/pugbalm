@@ -7,40 +7,39 @@
  * A tool that delivers therapy pugs to the directory from which it is run.
  *
  * @example
- * pugbalm 5 //downloads 5 pugs. 
+ * pugbalm 5 //downloads 5 pugs.
  */
 
-var http = require('http'),
+var BPromise = require('bluebird'),
+    wreck = BPromise.promisifyAll(require('wreck')),
+    fs = BPromise.promisifyAll(require('fs')),
+    querystring = require('querystring'),
     _ = require('lodash'),
-    Stream = require('stream').Transform,
-    fs = require('fs'),
-    imagesToDownload = Number(process.argv[2]) || 5,
-    imagesDownloaded = 0,
+
+    statusStream = process.stderr,
 
     baseUrl = 'http://api.giphy.com/v1/gifs/search',
     apiKey = 'dc6zaTOxFJmzC',
 
+    downloadLocation = process.cwd(),
+
     params = {
         q: 'pugs',
-        limit: imagesToDownload,
+        limit: Number(process.argv[2]),
+        offset: Date.now() % 800, // because there about 800 results in the query
         fmt: 'json',
-        api_key: apiKey,
+        api_key: apiKey
     };
 
-/**
- * @jsdoc function
- * @name serializeParams
- * @param {object}
- * Object containing request parameters.
- * @returns {string}
- * Accepts a params object and returns a serialized string to be appended to a base URL.
- */
-
-function serializeParams(params) {
-  return '?' + _.keys(params).map(function(k) {
-    return k + '=' + params[k];
-  }).join('&');
+// Validate cli input
+if (!params.limit) {
+    throw new Error('You don\'t ask for therapy with a value not representative of actual therapy. SHAME');
 }
+
+if (params.limit < 0) {
+    throw new Error('Try a positive number for PUG therapy.');
+}
+
 
 /**
  * @jsdoc function
@@ -55,35 +54,24 @@ function serializeParams(params) {
  */
 
 function downloadImage(path, id) {
+    var destination = downloadLocation + '/' + id + '.gif';
 
-    http.get(path, function(response) {
+    return wreck.requestAsync('GET', path, {agent: false, timeout: 30000})
+        .then(function (response) {
+            var writeStream = fs.createWriteStream(destination);
 
-      var output = new Stream(),
-          destination = process.cwd() + '/' + id + '.gif';
+            return new BPromise(function (resolve, reject) {
+                writeStream.on('finish', function () {
+                    resolve();
+                });
 
-      response.on('data', function(body) {
-        output.push(body);;
+                writeStream.on('error', function (err) {
+                    reject(err);
+                });
 
-      });
-
-      response.on('end', function() {
-        fs.writeFile(destination, output.read(), function(err) {
-
-          if (err) throw err;
-
-          imagesDownloaded++;
-
-          if (imagesToDownload === imagesDownloaded) {
-
-            console.log(imagesToDownload + ' pugs were delivered to ' + process.cwd() + '.\nPowered by GIPHY. http://giphy.com/');
-
-          }
-
+                response.pipe(writeStream);
+            });
         });
-
-      });
-
-    });
 
 };
 
@@ -100,26 +88,22 @@ function downloadImage(path, id) {
 
 function getListOfImages(baseUrl, params) {
 
-  http.get(baseUrl + serializeParams(params), function(response) {
+  var imagesDownloaded = 0;
 
-      var output = '';
-
-      response.setEncoding('utf8');
-      response.on('data', function(body) {
-          output += body;
-
-      });
-
-      response.on('end', function() {
-      
-          output = JSON.parse(output).data;
-
-          _.forEach(output, function(element) {
-              downloadImage(element.images.original.url, element.id);
+  return wreck.getAsync(baseUrl + '?' + querystring.stringify(params), {json: true})
+      .spread(function (response, payload) {
+          return payload.data;
+      })
+      .map(function (element) {
+          return downloadImage(element.images.original.url, element.id).then(function () {
+              statusStream.write('.');
+              imagesDownloaded++;
           });
-
+      }, {concurrency: 10}).then(function () {
+          statusStream.write('therapy complete\n');
+          statusStream.write(imagesDownloaded + ' pugs were delivered to ' + downloadLocation + '.\n');
+          statusStream.write('Powered by GIPHY. http://giphy.com/search/' + encodeURIComponent(params.q) + '\n');
       });
-  });
 
 };
 
