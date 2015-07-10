@@ -37,20 +37,9 @@ var http = require('http'),
  */
 
 function serializeParams(params) {
-
-    var first = true;
-
-    return _.reduce(params, function(result, n, key) {
-
-        if (first) {
-            first = false;
-            return result + '?' + key + '=' + n;
-        } else {
-            return result + '&' + key + '=' + n;
-        }
-
-    },'');
-
+  return '?' + _.keys(params).map(function(k) {
+    return k + '=' + params[k];
+  }).join('&');
 }
 
 /**
