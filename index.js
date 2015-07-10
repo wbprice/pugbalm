@@ -4,10 +4,10 @@
 
 /**
  * @description
- * A tool that downloads a given number of pug images to the directory where it is run.
+ * A tool that delivers therapy pugs to the directory from which it is run.
  *
  * @example
- * node pugbalm 5 // download 5 pugs
+ * pugbalm 5 //downloads 5 pugs. 
  */
 
 var http = require('http'),
@@ -25,7 +25,7 @@ var http = require('http'),
         api_key: apiKey,
     };
 
-/*
+/**
  * @jsdoc function
  * @name serializeParams
  * @param {object}
@@ -51,6 +51,18 @@ function serializeParams(params) {
 
 }
 
+/**
+ * @jsdoc function
+ * @name downloadImage
+ * @param {string} path
+ * The URL for the image to be downloaded.
+ * @param {string} id
+ * The ID of the image to be downloaded.  Will be used to make the filename.
+ *
+ * @description
+ * Uses HTTP to download the image from the path provided and save it to the current working directory.
+ */
+
 function downloadImage(path, id) {
 
     http.get(path, function(response) {
@@ -74,6 +86,17 @@ function downloadImage(path, id) {
     });
 
 };
+
+/**
+ * @jsdoc function
+ * @name getListOfImages
+ * @param {string} baseUrl
+ * The URL for the Giphy API.
+ * @param {object} params
+ * An object containing configuration information for the API request.
+ * @description
+ * Uses HTTP to get an array of objects that contain information related to a given gif.
+ */
 
 function getListOfImages(baseUrl, params) {
 
